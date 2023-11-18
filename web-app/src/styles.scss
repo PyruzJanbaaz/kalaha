@@ -26,7 +26,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   justify-content: center;
 }
 
-.large-button {
-  font-size: 1.5rem;
-  padding: 1.5rem 3.5rem !important;
+.text-justify{
+  text-align: justify;
 }
+
+.large-button {
+  font-size: 1.5rem!important;
+  padding: 2rem 3.5rem !important;
+}
+

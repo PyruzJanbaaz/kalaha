@@ -7,17 +7,11 @@ import * as SockJS from 'sockjs-client';
 })
 export class StompSockService {
 
-  private stompClients: Stomp.Client;
+  public stompClients: Stomp.Client;
 
   constructor() {
     const socket = new SockJS('http://localhost:3000/socket');
     this.stompClients = Stomp.over(socket);
-    this.stompClients.connect({}, (frame) => {
-      console.log('Connected: ' + frame);
-      this.stompClients.subscribe('/topic/messages', (message) => {
-        console.log('Received: ' + message);
-      });
-    });
   }
 
   unsubscribe(): void {

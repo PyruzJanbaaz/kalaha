@@ -22,7 +22,7 @@ export class  AuthenticationService {
   }
 
   public login(): void {
-    this.keycloakService.login();
+    this.keycloakService.login({ redirectUri: environment.baseUrl + '/newgame' });
   }
 
 }
