@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class BoardComponent{
 
   turning = {
-    color: 'accent',
+    color: '',
     text: "Your turn"
   }
 
@@ -54,7 +54,7 @@ export class BoardComponent{
     }, 2000);
     if(player === 1){
       this.turning = {
-        color: 'accent',
+        color: '',
         text: "Your turn"
       }
     } else {

@@ -1,6 +1,7 @@
 <mat-toolbar color="primary">
     <b class="mr-1">My Kahala Game</b>
     <a mat-button routerLink="/profile" *ngIf="isUserAuthenticated()">Profile</a>
+    <a mat-button routerLink="/newgame" *ngIf="isUserAuthenticated()">New Game</a>
     <a mat-button routerLink="/scores" *ngIf="isUserAuthenticated()">Scores</a>
     <span class="spacer"></span>
     <button mat-button (click)="logout()" *ngIf="isUserAuthenticated()">Logout</button>
