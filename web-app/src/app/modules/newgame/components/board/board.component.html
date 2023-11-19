@@ -5,6 +5,10 @@
         mat-raised-button 
         color="warn" 
         class="mat-button-large large-button">Leave the game</button>
+        <button 
+        mat-raised-button 
+        [color]="turning.color" 
+        class="mat-button-large large-button ml-05">{{ turning.text }}</button>
   </mat-card-actions>
   <div class="game-board">
     <div class="player player-1">
@@ -16,6 +20,9 @@
         <mat-card class="pit player-1" *ngFor="let pit of getPits(1); let i = index" (click)="playerPitClick(1, i)">
           <b class="pit-number">{{ pit }}</b>
         </mat-card>
+      </div>
+      <div class="message-container">
+        <app-loading *ngIf="isWaiting" [message]="loadingMessage"></app-loading>
       </div>
       <div class="pits">
         <mat-card class="pit player-2" *ngFor="let pit of getPits(2); let i = index" (click)="playerPitClick(2, i)">

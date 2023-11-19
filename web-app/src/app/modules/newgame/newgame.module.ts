@@ -6,9 +6,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoadingComponent } from 'src/app/shared/loading/loading.component';
 
 @NgModule({
-  declarations: [NewgameComponent, BoardComponent],
+  declarations: [NewgameComponent,
+  BoardComponent,
+  LoadingComponent
+  ],
   imports: [CommonModule, 
     MatCardModule,
     MatButtonModule,

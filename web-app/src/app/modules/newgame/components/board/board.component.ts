@@ -3,12 +3,21 @@ import { StompSockService } from 'src/app/core/websocket/StompSockService';
 import { ApiDataService } from 'src/app/core/http/api-data.service';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent{
+
+  turning = {
+    color: 'accent',
+    text: "Your turn"
+  }
+
+  isWaiting = false;
+  loadingMessage = 'Waiting...'
 
   constructor(private stompSockService: StompSockService,
               private apiDataService: ApiDataService,
@@ -38,6 +47,22 @@ export class BoardComponent{
   playerPitClick(player: number, pitIndex: number) {
     // Handle player's move for the clicked pit
     // Implement game logic for stone distribution
+    // just to show how you can show/hode the loading component
+    this.isWaiting = true;
+    setTimeout(() => {
+      this.isWaiting = false;
+    }, 2000);
+    if(player === 1){
+      this.turning = {
+        color: 'accent',
+        text: "Your turn"
+      }
+    } else {
+      this.turning = {
+        color: '',
+        text: "Opponent's turn"
+      }
+    }
   }
 
   playerStoreClick(player: number) {
