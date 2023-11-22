@@ -29,6 +29,10 @@ export class BoardComponent{
     '1': 0,
     '2': 0
   };
+  playerSuffix : { [player: string]: string }= {
+    'Player1': '',
+    'Palyer2': ''
+  } 
   playerStores: { [player: string]: number } = {
     '1': 0,
     '2': 0
@@ -73,6 +77,7 @@ export class BoardComponent{
         const store: { order: number; value: number } = sortedArray[6];
         this.playerStores[el.playerName] = store.value;
         this.playerScores[el.playerName] = el.score;
+        this.playerSuffix[el.playerName] = el.playerName === this.sessionStorageService.get('user').fullName ? '(You)' : '';
         console.log(this.playerPits)
         console.log('playerStores' +this.playerStores)
         console.log('playerScores' + this.playerScores)
@@ -151,10 +156,12 @@ export class BoardComponent{
     this.loadingMessage = 'Leaving...';
     this.apiDataService.leave(leaveRequestDto).then(() => {
       this.endGame();
-      location.reload();
+      this.reload();
     })
   }
 
-  
+  reload() {
+    location.reload();
+  }
 
 }
