@@ -61,8 +61,7 @@ export class BoardComponent{
     this.playerStores = {};
     this.playerScores = {};
     this.playerPits = {};
-    if(event.subject === 'start')
-      this.toastr.success('The game has started');
+
 
       event.gameDto.boardList.forEach((el: any) => {
         this.players.push(el.playerName);
@@ -80,25 +79,36 @@ export class BoardComponent{
         this.isWaiting = false;
       });
 
-      console.log(this.playerScores)
-    if(event.subject === 'end'){
-      const maxEntry = Object.entries(this.playerScores).reduce((max, entry) => {
-        return entry[1] > max[1] ? entry : max;
-      }, ['', Number.MIN_VALUE]);
-      console.log(maxEntry);
-      if(maxEntry[0] === 'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */){
-        this.finalResult = {
-          icon: 'congrats.png',
-          text: 'You won!'
-        };
-      } else {
-        this.finalResult = {
-          icon: 'sorry.png',
-          text: 'You lost!'
-        };
-      }
 
-    }
+      switch (event.subject ) {
+        case 'start':
+          this.toastr.success('The game has started');
+          break;
+        case 'end':
+          const maxEntry = Object.entries(this.playerScores).reduce((max, entry) => {
+            return entry[1] > max[1] ? entry : max;
+          }, ['', Number.MIN_VALUE]);
+          console.log(maxEntry);
+          if(maxEntry[0] === 'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */){
+            this.finalResult = {
+              icon: 'congrats.png',
+              text: 'You won!'
+            };
+          } else {
+            this.finalResult = {
+              icon: 'sorry.png',
+              text: 'You lost!'
+            };
+          }
+        break;
+        case 'leave':
+          this.endGame();
+          this.finalResult = {
+            icon: 'sorry.png',
+            text: 'Opponent left!'
+          };
+        break;
+      }      
     console.log(event)
   }
 
@@ -133,7 +143,6 @@ export class BoardComponent{
 
   endGame() {
     this.stompSockService.unsubscribe( '/app/user/' + /*this.sessionStorageService.get('user').userId*/ 'b93fee30-d097-44d3-9091-9f6a62b2b6de' + '/' + this.sessionStorageService.get('gameId'));
-    location.reload();
   }
 
   leaveTheGame() {
@@ -141,7 +150,8 @@ export class BoardComponent{
     this.isWaiting = true;
     this.loadingMessage = 'Leaving...';
     this.apiDataService.leave(leaveRequestDto).then(() => {
-      this.endGame()
+      this.endGame();
+      location.reload();
     })
   }
 
