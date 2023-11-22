@@ -90,11 +90,11 @@ h2 {
 }
 
 .pit-number {
-  width: 1rem;
-  height: 1.3rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 3rem;
   text-align: center;
-  padding: 0.7rem 1rem 1rem;
+  padding: 0.7rem;
   -webkit-box-shadow: 2px 2px 5px 2px #333;   
   box-shadow: 2px 2px 5px 2px #333;  
 }
@@ -130,17 +130,18 @@ h2 {
   border-radius:500px;
   background-color: #e2d4bb; 
   z-index: 10;
-  top:5%;
-  left:30%;
+  left: 50%;
+  top: 50%;
   -webkit-box-shadow: 2px 2px 5px 2px #333;   
   box-shadow: 2px 2px 5px 2px #333;   
+  transform: translate(-50%, -50%);
 }
 
 .final-result-hdr h1 {
   display: block;
   text-align: center;
   color: #746440;
-  font-size: 5.5rem;
+  font-size: 5.2rem;
   line-height: 5rem;
 }
 
