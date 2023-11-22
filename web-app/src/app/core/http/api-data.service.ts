@@ -8,11 +8,20 @@ export class ApiDataService {
 
   constructor(private axiosService: AxiosInterceptorService) { }
 
-  startGame(data: any): Promise<any> {
-    return this.axiosService.post('/api/v1/game', data);
+  start(): Promise<any> {
+    return this.axiosService.post('/api/waitingroom/join', {});
   }
 
-  exitGame(): Promise<any> {
-    return this.axiosService.post('/api/v1/game/exit', {});
+  move(data: any): Promise<any> {
+    return this.axiosService.post('/api/game/move', data);
+  }
+
+  leave(data: any): Promise<any> {
+    return this.axiosService.post('/api/game/leave', data);
+  }
+
+  scores() : Promise<any> {
+    return this.axiosService.post('/api/scores', {});
+
   }
 }

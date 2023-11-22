@@ -1,17 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ApiDataService} from '../../core/http/api-data.service';
 
 @Component({
   selector: 'app-scores',
   templateUrl: './scores.component.html',
   styleUrls: ['./scores.component.css']
 })
-export class ScoresComponent {
-  displayedColumns: string[] = ['id', 'date', 'yourScore', 'opponentScore'];
+export class ScoresComponent implements OnInit {
   
-  dataSource = [
-    { id: 1, date: '2023/09/12 15:56:20', yourScore: 41, opponentScore: 25 },
-    { id: 2, date: '2023/09/15 10:00:20', yourScore: 44, opponentScore: 16 },
-    { id: 3, date: '2023/10/01 00:00:33', yourScore: 55, opponentScore: 5 },
-    // Add more data as needed
-  ];
+  dataSource: { date: string, yourScore: string, opponentScore: string }[] = [];
+
+  constructor(private apiDataService: ApiDataService) {}
+
+    ngOnInit() {
+      this.apiDataService.scores().then((result) => {
+        result.forEach((el: any) => {
+          this.dataSource.push({
+            date: el.gameDate,
+            yourScore: el.playersScore[0].playerName + ': ' + el.playersScore[0].score,
+            opponentScore: el.playersScore[1].playerName + ': ' + el.playersScore[1].score,
+          });
+        });
+        console.log(this.dataSource)
+      });
+    }
+
 }

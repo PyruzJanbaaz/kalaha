@@ -1,38 +1,63 @@
 <div class="board">
-  <mat-card-actions class="text-center ma-1">
-    <button 
-        (click)="unsubscribe()"
-        mat-raised-button 
-        color="warn" 
-        class="mat-button-large large-button">Leave the game</button>
-        <button 
-        mat-raised-button 
-        [color]="turning.color" 
-        class="mat-button-large large-button ml-05">{{ turning.text }}</button>
-  </mat-card-actions>
-  <div class="game-board">
-    <div class="player player-1">
-      <h2>Player 1</h2>
-      <mat-card class="store" (click)="playerStoreClick(1)">{{ getPlayerStore(1) }}</mat-card>
-    </div>
-    <div class="pits-container">
-      <div class="pits">
-        <mat-card class="pit player-1" *ngFor="let pit of getPits(1); let i = index" (click)="playerPitClick(1, i)">
-          <b class="pit-number">{{ pit }}</b>
-        </mat-card>
+  <div *ngIf="finalResult.icon === ''">
+    <mat-card-actions class="text-center ma-1">
+      <button 
+          (click)="leaveTheGame()"
+          mat-raised-button 
+          color="warn" 
+          [class.disabled]="isWaiting" 
+          [disabled]="isWaiting" 
+          class="mat-button-large large-button">Leave the game</button>
+          <button 
+          mat-raised-button 
+          [color]="turning.color" 
+          [class.disabled]="isWaiting"
+          [disabled]="isWaiting" 
+          class="mat-button-large large-button ml-05">{{ turning.text }}</button>
+    </mat-card-actions>
+    <div class="game-board">
+      <div class="player player-1" [class.disabled]="isWaiting" >
+        <h2>Player 1</h2>
+        <mat-card class="store">{{ getPlayerStore(players[0]) }}</mat-card>
       </div>
-      <div class="message-container">
-        <app-loading *ngIf="isWaiting" [message]="loadingMessage"></app-loading>
+      <div class="pits-container">
+        <div class="pits">
+          <mat-card 
+            class="pit player-1" 
+            [class.disabled]="isWaiting" 
+            *ngFor="let pit of getPits(players[0]); let i = index" 
+            (click)="playerPitClick(1, i)">
+            <b class="pit-number">{{ pit }}</b>
+          </mat-card>
+        </div>
+        <div class="message-container">
+          <app-loading *ngIf="isWaiting" [message]="loadingMessage"></app-loading>
+        </div>
+        <div class="pits">
+          <mat-card 
+            class="pit player-2" 
+            [class.disabled]="isWaiting" 
+            *ngFor="let pit of getPits(players[1]); let i = index" 
+            (click)="playerPitClick(2, i)">
+            <b class="pit-number">{{ pit }}</b>
+          </mat-card>
+        </div>
       </div>
-      <div class="pits">
-        <mat-card class="pit player-2" *ngFor="let pit of getPits(2); let i = index" (click)="playerPitClick(2, i)">
-          <b class="pit-number">{{ pit }}</b>
-        </mat-card>
+      <div class="player player-2" [class.disabled]="isWaiting" >
+        <h2>Player 2</h2>
+        <mat-card class="store">{{ getPlayerStore(players[1]) }}</mat-card>
       </div>
-    </div>
-    <div class="player player-2">
-      <h2>Player 2</h2>
-      <mat-card class="store" (click)="playerStoreClick(2)">{{ getPlayerStore(2) }}</mat-card>
     </div>
   </div>
+</div>
+<div class="final-result-hdr" *ngIf="finalResult.icon !== ''">
+  <img [src]="'../../assets/images/' + finalResult.icon" />
+  <h1>{{ finalResult.text }}</h1>
+  <p>
+    <button 
+    (click)="endGame()"
+    mat-raised-button 
+    color="primary" 
+    class="mat-button-large large-button">Start new game</button>
+  </p>
 </div>

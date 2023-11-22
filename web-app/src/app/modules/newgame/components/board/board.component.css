@@ -112,3 +112,40 @@ h2 {
 .player-2:hover{
   background-color: #946737; 
 }
+
+.disabled {
+  cursor: not-allowed!important;
+  background-color: #888!important;
+  opacity: 0.7;
+}
+
+.final-result-hdr {
+  position: absolute;
+  width: 600px; 
+  height:600px;
+  border-radius:500px;
+  background-color: #e2d4bb; 
+  z-index: 10;
+  top:5%;
+  left:30%;
+  -webkit-box-shadow: 2px 2px 5px 2px #333;   
+  box-shadow: 2px 2px 5px 2px #333;   
+}
+
+.final-result-hdr h1 {
+  display: block;
+  text-align: center;
+  color: #746440;
+  font-size: 6rem;
+  line-height: 5rem;
+}
+
+.final-result-hdr img {
+  width: 165px;
+  margin: 80px auto 0;
+  display: block;
+}
+
+.final-result-hdr p {
+  text-align: center;
+}

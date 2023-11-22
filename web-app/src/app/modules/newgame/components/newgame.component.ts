@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiDataService } from '../../../core/http/api-data.service';
+import { SessionStorageService } from 'src/app/core/store/session.storage.service';
+import { AuthenticationService } from 'src/app/core/authentication/authentication.service';
 
 @Component({
   selector: 'app-newgame',
@@ -8,20 +10,27 @@ import { ApiDataService } from '../../../core/http/api-data.service';
 })
 export class NewgameComponent {
 
-  constructor(private apiDataService: ApiDataService) { }
+  constructor(private apiDataService: ApiDataService,
+              private sessionStorageService: SessionStorageService,
+              private authenticationService: AuthenticationService) { }
 
   isLoading = false;
   isGameCreated = false;
 
-  startGame() {
+  async startGame() {
     this.isLoading = true;
-    const data = {
-      "player1": "Pyruz",
-      "player2": "Riaz"
-    };
-    this.apiDataService.startGame(data)
+    this.sessionStorageService.set('token', await this.authenticationService.getToken());
+    this.authenticationService.decodeToken().then((token) => {
+      console.log(token)
+      this.sessionStorageService.set('user', {
+        userId: token.sub,
+        fullName: token.name
+      });
+    })
+    this.apiDataService.start()
     .then(response => {
-      console.log(response);
+      this.sessionStorageService.set('gameId', response);
+      console.log(this.sessionStorageService.get('gameId'));
       this.isLoading = false;
       this.isGameCreated = true;
     })

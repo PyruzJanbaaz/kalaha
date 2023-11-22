@@ -9,8 +9,8 @@ export const environment = {
     // Url of the Identity Provider
     issuer: 'http://keycloak:8081',
     // Realm
-    realm: 'test',
-    clientId: 'frontend'
+    realm: 'mancala',
+    clientId: 'mancala_web_ui'
   },
   baseUrl: 'http://localhost:4200'
 };

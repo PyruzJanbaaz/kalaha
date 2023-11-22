@@ -30,6 +30,7 @@
     "keycloak-js": "^20.0.1",
     "lodash-es": "^4.17.21",
     "net": "^1.0.2",
+    "ngx-toastr": "^18.0.0",
     "rxjs": "^7.8.1",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",

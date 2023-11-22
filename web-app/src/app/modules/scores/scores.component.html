@@ -3,34 +3,14 @@
     <mat-card-title>Scores</mat-card-title>
   </mat-card-header>
   <mat-card-content class="mb-1">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-      <!-- Define columns -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-      </ng-container>
-    
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef>Date</th>
-        <td mat-cell *matCellDef="let element">{{ element.date }}</td>
-      </ng-container>
-    
-      <ng-container matColumnDef="yourScore">
-        <th mat-header-cell *matHeaderCellDef>Yout score</th>
-        <td mat-cell *matCellDef="let element">{{ element.yourScore }}</td>
-      </ng-container>
-    
-          
-      <ng-container matColumnDef="opponentScore">
-        <th mat-header-cell *matHeaderCellDef>Opponent's score</th>
-        <td mat-cell *matCellDef="let element">{{ element.opponentScore }}</td>
-      </ng-container>
-
-      <!-- Add more columns as needed -->
-    
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    
+  <table class="mat-elevation-z8">
+      <tbody>
+        <tr *ngFor="let row of dataSource; let i = index"  >
+          <td>{{ row.date}}</td>
+          <td>{{ row.yourScore}}</td>
+          <td>{{ row.opponentScore}}</td>
+        </tr>
+      </tbody>
   </table>
   </mat-card-content>
 </mat-card>

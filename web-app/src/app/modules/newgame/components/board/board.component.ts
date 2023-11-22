@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { StompSockService } from 'src/app/core/websocket/StompSockService';
 import { ApiDataService } from 'src/app/core/http/api-data.service';
-import { Router } from '@angular/router';
-
+import { MessageService } from 'src/app/core/websocket/messageService';
+import { StompSockService } from 'src/app/core/websocket/StompSockService';
+import { SessionStorageService } from 'src/app/core/store/session.storage.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-board',
@@ -11,82 +12,138 @@ import { Router } from '@angular/router';
 })
 export class BoardComponent{
 
+  finalResult = {
+    icon:'',
+    text: ''
+  };
+  turnPlayerId = '';
   turning = {
     color: '',
-    text: "Your turn"
+    text: 'Processing...'
   }
 
-  isWaiting = false;
-  loadingMessage = 'Waiting...'
+  isWaiting = true;
+  loadingMessage = 'Waiting to join an opponent...';
+  players: string[] = ['1', '2']; // Player 1 and Player 2
+  playerScores: { [player: string]: number } = {
+    '1': 0,
+    '2': 0
+  };
+  playerStores: { [player: string]: number } = {
+    '1': 0,
+    '2': 0
+  };
+  playerPits: { [player: string]: number[] } = {
+    '1': [0, 0, 0, 0, 0, 0],
+    '2': [0, 0, 0, 0, 0, 0],
+  };
 
-  constructor(private stompSockService: StompSockService,
+  constructor(private messageService: MessageService,
+              private toastr: ToastrService,    
               private apiDataService: ApiDataService,
-              private router: Router) {
-    this.subscribe();
-  }
-
-  subscribe(): void {
-    this.stompSockService.stompClients.connect({}, (frame) => {
-      console.log('Connected: ' + frame);
-      this.stompSockService.stompClients.subscribe('/topic/messages', (message) => {
-        console.log('Received: ' + message);
-      });
+              private stompSockService: StompSockService,
+              private sessionStorageService: SessionStorageService) {
+    // Subscribe to the message$ observable to receive messages
+    this.stompSockService.subscribe(
+        '/app/user/' + /*this.sessionStorageService.get('user').userId*/ 'b93fee30-d097-44d3-9091-9f6a62b2b6de' + '/' + this.sessionStorageService.get('gameId'),
+        this.sessionStorageService.get('token'));
+    this.messageService.message$.subscribe((message) => {
+      this.handleMessage(message);
     });
   }
 
-  players = [1, 2]; // Player 1 and Player 2
-  playerPits: { [player: number]: number[] } = {
-    1: [6, 6, 6, 6, 6, 6],
-    2: [6, 6, 6, 6, 6, 6],
-  };
-  playerStores: { [player: number]: number } = {
-    1: 0,
-    2: 0
-  };
+  private handleMessage(message: string): void {
+    // Do something with the received message
+    const event = JSON.parse(message)
+    this.turnPlayerId = event.gameDto.turnPlayerId;
+    this.turning.text = this.turnPlayerId ===  'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */ ? 'Your turn' :"Opponent's turn";
+    this.players = []; 
+    this.playerStores = {};
+    this.playerScores = {};
+    this.playerPits = {};
+    if(event.subject === 'start')
+      this.toastr.success('The game has started');
 
-  playerPitClick(player: number, pitIndex: number) {
-    // Handle player's move for the clicked pit
-    // Implement game logic for stone distribution
-    // just to show how you can show/hode the loading component
-    this.isWaiting = true;
-    setTimeout(() => {
-      this.isWaiting = false;
-    }, 2000);
-    if(player === 1){
-      this.turning = {
-        color: '',
-        text: "Your turn"
+      event.gameDto.boardList.forEach((el: any) => {
+        this.players.push(el.playerName);
+        // Sort the array based on the "order" property
+        const sortedArray: { order: number; value: number }[] = el.pitDtoList.sort((a: { order: number; value: number }, b: { order: number; value: number }) => a.order - b.order);
+        // Extract the "value" property and create a new array
+        const resultArray: number[] = sortedArray.slice(0, 6).map(item => item.value);
+        this.playerPits[el.playerName] = resultArray;
+        const store: { order: number; value: number } = sortedArray[6];
+        this.playerStores[el.playerName] = store.value;
+        this.playerScores[el.playerName] = el.score;
+        console.log(this.playerPits)
+        console.log('playerStores' +this.playerStores)
+        console.log('playerScores' + this.playerScores)
+        this.isWaiting = false;
+      });
+
+      console.log(this.playerScores)
+    if(event.subject === 'end'){
+      const maxEntry = Object.entries(this.playerScores).reduce((max, entry) => {
+        return entry[1] > max[1] ? entry : max;
+      }, ['', Number.MIN_VALUE]);
+      console.log(maxEntry);
+      if(maxEntry[0] === 'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */){
+        this.finalResult = {
+          icon: 'congrats.png',
+          text: 'You won!'
+        };
+      } else {
+        this.finalResult = {
+          icon: 'sorry.png',
+          text: 'You lost!'
+        };
       }
-    } else {
-      this.turning = {
-        color: '',
-        text: "Opponent's turn"
+
+    }
+    console.log(event)
+  }
+
+
+  async playerPitClick(player: number, pitIndex: number) {
+    if(!this.isWaiting && this.turnPlayerId === 'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */){
+      // Handle player's move for the clicked pit
+      // Implement game logic for stone distribution
+      // just to show how you can show/hode the loading component
+      console.log(player  + ' '+ pitIndex)
+      this.isWaiting = true;
+      this.loadingMessage = 'Loading...';
+      const moveRequestDto = {
+        joinId: this.sessionStorageService.get('gameId'),
+        selectedPitIndex: pitIndex
       }
+      this.apiDataService.move(moveRequestDto).then((result) => {
+        console.log(result)
+      });
     }
   }
 
-  playerStoreClick(player: number) {
-    // Handle player's move for the store
-    // Implement game logic for capturing stones
-  }
-
-  getPits(player: number): number[] {
+  getPits(player: string): number[] {
     return this.playerPits[player];
   }
 
-  getPlayerStore(player: number): number {
+  getPlayerStore(player: string): number {
     return this.playerStores[player];
   }
 
-  getPlayerClass(player: number): string {
-    return '';
+
+  endGame() {
+    this.stompSockService.unsubscribe( '/app/user/' + /*this.sessionStorageService.get('user').userId*/ 'b93fee30-d097-44d3-9091-9f6a62b2b6de' + '/' + this.sessionStorageService.get('gameId'));
+    location.reload();
   }
 
-  unsubscribe() {
-    this.apiDataService.exitGame().then(() => {
-      this.stompSockService.unsubscribe();
-      location.reload();
+  leaveTheGame() {
+    const leaveRequestDto = {joinId: this.sessionStorageService.get('gameId')};
+    this.isWaiting = true;
+    this.loadingMessage = 'Leaving...';
+    this.apiDataService.leave(leaveRequestDto).then(() => {
+      this.endGame()
     })
-
   }
+
+  
+
 }
