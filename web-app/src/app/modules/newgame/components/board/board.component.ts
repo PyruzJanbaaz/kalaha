@@ -24,14 +24,20 @@ export class BoardComponent{
 
   isWaiting = true;
   loadingMessage = 'Waiting to join an opponent...';
-  players: string[] = ['1', '2']; // Player 1 and Player 2
+  players: string[] = ['', '']; // Player 1 and Player 2
   playerScores: { [player: string]: number } = {
     '1': 0,
     '2': 0
   };
-  playerSuffix : { [player: string]: string }= {
-    'Player1': '',
-    'Palyer2': ''
+  playerSuffix : { [player: string]: {suf: string, id: string} }= {
+    '': {
+        suf: '',
+        id: ''
+      },
+    '': {
+        suf: '',
+        id: ''
+      },
   } 
   playerStores: { [player: string]: number } = {
     '1': 0,
@@ -68,16 +74,19 @@ export class BoardComponent{
 
 
       event.gameDto.boardList.forEach((el: any) => {
-        this.players.push(el.playerName);
+        this.players.push(el.player.name);
         // Sort the array based on the "order" property
         const sortedArray: { order: number; value: number }[] = el.pitDtoList.sort((a: { order: number; value: number }, b: { order: number; value: number }) => a.order - b.order);
         // Extract the "value" property and create a new array
         const resultArray: number[] = sortedArray.slice(0, 6).map(item => item.value);
-        this.playerPits[el.playerName] = resultArray;
+        this.playerPits[el.player.name] = resultArray;
         const store: { order: number; value: number } = sortedArray[6];
-        this.playerStores[el.playerName] = store.value;
-        this.playerScores[el.playerName] = el.score;
-        this.playerSuffix[el.playerName] = el.playerName === this.sessionStorageService.get('user').fullName ? '(You)' : '';
+        this.playerStores[el.player.name] = store.value;
+        this.playerScores[el.player.name] = el.score;
+        this.playerSuffix[el.player.name] = {
+          suf: (el.player.name === this.sessionStorageService.get('user').fullName ? '(You)' : ''),
+          id: el.player.userName
+        }
         console.log(this.playerPits)
         console.log('playerStores' +this.playerStores)
         console.log('playerScores' + this.playerScores)

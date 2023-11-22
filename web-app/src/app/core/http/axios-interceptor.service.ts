@@ -25,16 +25,30 @@ export class AxiosInterceptorService {
     );
 
     // Set up response interceptor
-    this.axiosInstance.interceptors.response.use(
-      (response: AxiosResponse) => {
-        // Modify response data or headers if needed
-        return response;
-      },
-      (error: AxiosError) => {
-        // Handle response errors (e.g., unauthorized, not found)
-        return Promise.reject(error);
+// Add a response interceptor
+  this.axiosInstance.interceptors.response.use(
+    (response) => {
+      // You can modify the response data here before it is returned
+      return response;
+    },
+    (error: AxiosError) => {
+      // Handle response error
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Response error:', error.response.status, error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('Request error:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error:', error.message);
       }
-    );
+
+      // You can throw the error or return a custom response
+      return Promise.reject(error);
+    });
+
     }
 
     public get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
