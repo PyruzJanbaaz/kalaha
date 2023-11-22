@@ -103,8 +103,9 @@ export class BoardComponent{
   }
 
 
-  async playerPitClick(player: number, pitIndex: number) {
-    if(!this.isWaiting && this.turnPlayerId === 'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */){
+  async playerPitClick(player: string, pitIndex: number) {
+    if(!this.isWaiting && player === this.turnPlayerId &&
+      this.turnPlayerId === 'b93fee30-d097-44d3-9091-9f6a62b2b6de' /*this.sessionStorageService.get('user').userId */){
       // Handle player's move for the clicked pit
       // Implement game logic for stone distribution
       // just to show how you can show/hode the loading component

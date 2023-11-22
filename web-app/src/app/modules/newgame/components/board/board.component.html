@@ -26,7 +26,7 @@
             class="pit player-1" 
             [class.disabled]="isWaiting" 
             *ngFor="let pit of getPits(players[0]); let i = index" 
-            (click)="playerPitClick(1, i)">
+            (click)="playerPitClick(players[0], i)">
             <b class="pit-number">{{ pit }}</b>
           </mat-card>
         </div>
@@ -38,7 +38,7 @@
             class="pit player-2" 
             [class.disabled]="isWaiting" 
             *ngFor="let pit of getPits(players[1]); let i = index" 
-            (click)="playerPitClick(2, i)">
+            (click)="playerPitClick(players[1], i)">
             <b class="pit-number">{{ pit }}</b>
           </mat-card>
         </div>
